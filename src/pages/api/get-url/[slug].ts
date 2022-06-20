@@ -10,7 +10,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 	if (!slug || typeof slug !== "string") {
 		res.statusCode = 404;
 
-		res.json({ message: "Use with slug"});
+		res.json({ message: "Use with slug" });
 		return;
 	}
 
@@ -25,9 +25,18 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 	if (!data) {
 		res.statusCode = 404;
 
-		res.json({ message: "Not found"});
+		res.json({ message: "Not found" });
 		return;
 	}
 
 	res.json(data);
+	res.end();
+
+	await prisma.shortLink.update({
+		data: {
+			totalVisits: { increment: 1 }
+		},
+		where: { id: data.id }
+	});
+
 };
